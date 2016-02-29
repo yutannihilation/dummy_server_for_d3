@@ -6,8 +6,7 @@ import (
 
 	"math/rand"
 
-	"github.com/labstack/echo"
-	mw "github.com/labstack/echo/middleware"
+	"github.com/gin-gonic/gin"
 )
 
 type (
@@ -25,8 +24,8 @@ func (t myTime) MarshalJSON() ([]byte, error) {
 }
 
 // Handler
-func hello(c *echo.Context) error {
-	return c.JSON(http.StatusOK, dummy_data())
+func hello(c *gin.Context) {
+	c.JSON(http.StatusOK, dummy_data())
 }
 
 func dummy_data() Record {
@@ -35,16 +34,12 @@ func dummy_data() Record {
 
 func main() {
 	// Echo instance
-	e := echo.New()
-
-	// Middleware
-	e.Use(mw.Logger())
-	e.Use(mw.Recover())
+	r := gin.Default()
 
 	// Routes
-	e.Get("/data", hello)
-	e.Index("./index.html")
+	r.GET("/data", hello)
+	r.StaticFile("/", "index.html")
 
 	// Start server
-	e.Run(":1323")
+	r.Run(":1323")
 }
